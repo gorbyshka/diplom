@@ -78,6 +78,10 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
     fetchData();
   }, []);
 
+  const saveDataToLocalStorage = (data: NftProp[]) => {
+    localStorage.setItem('collection', JSON.stringify(data));
+  };
+
   const handleCollectClick = (index: number, name: string, image: string) => {
     const nft: NftProp = {
       owner: name,
@@ -91,13 +95,8 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
       saveDataToLocalStorage(newCollection);
       return newCollection;
     });
-    
-  };  
-  
-  const saveDataToLocalStorage = (data: NftProp[]) => {
-    localStorage.setItem('collection', JSON.stringify(data));
   };
- 
+  
   const handleBuyClick = (index: number) => {
     if (fetchedNft.length > 0 && fetchedNft[0]?.price) {
       const price = fetchedNft[0]?.price;
@@ -130,13 +129,13 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
               Coming soon...
             </NftImagePlaceholder>
           )}
-
+  
           <NftName>
             {nft.metadata && nft.metadata.name
               ? nft.metadata.name
               : 'Unnamed NFT'}
           </NftName>
-
+  
           <NftItems>
             <Owner>Owner: {fetchedNft[0]?.owner}</Owner>
             <Price>
@@ -157,14 +156,14 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
                   Collect
                 </CollectButton>
               </NavLink>
-
+  
             ) : (
               <BuyButton onClick={() => handleBuyClick(index)}>Buy</BuyButton>
             )}
-
+  
           </NftItems>
         </NftContainer>
       ))}
     </MarketContainer>
-  );
+  );  
 };

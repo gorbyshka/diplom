@@ -6,17 +6,26 @@ import { NftProp } from '../../types/marketTypes/NftProp';
 export const Collection: React.FC = () => {
   const location = useLocation();
   const selectedNft = location.state?.selectedNft;
-  const purchasedNftsFromMarket = location.state?.purchasedNfts;
+
   const [collection, setCollection] = useState<NftProp[]>([]);
 
-  useEffect(() => {
-    setCollection(purchasedNftsFromMarket || []);
-  }, [purchasedNftsFromMarket]);
-
-
   const addToCollection = (nft: NftProp) => {
-    setCollection([nft]);
+    setCollection(prevCollection => {
+      const newCollection = [...prevCollection, nft];
+      saveDataToSessionStorage(newCollection);
+      return newCollection;
+    });
   };
+
+  const saveDataToSessionStorage = (data: NftProp[]) => {
+    sessionStorage.setItem('collection', JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    const savedCollection = sessionStorage.getItem('collection');
+    const initialCollection = savedCollection ? JSON.parse(savedCollection) : [];
+    setCollection(initialCollection);
+  }, []);
 
   useEffect(() => {
     if (selectedNft) {
@@ -26,12 +35,20 @@ export const Collection: React.FC = () => {
 
   return (
     <MarketContainer>
-      {collection.length > 0 && (
-        <NftContainer key={`collection-${collection[0].name}`}>
-          <NftImage src={`https://gateway.pinata.cloud/ipfs/${collection[0]?.image?.replace('ipfs://', '')}`} alt="" />
-          <NftName>{collection[0].name}</NftName>
-        </NftContainer>
-      )}
+      {collection.length > 0 &&
+        collection.map((nft, index) => (
+          <NftContainer key={`collection-${index}`}>
+            <NftImage
+              src={`https://gateway.pinata.cloud/ipfs/${nft.image?.replace('ipfs://', '')}`}
+              alt={`collection-${index}`}
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                const monkey: string = require('./img/nft-monkey.jpg');
+                e.currentTarget.src = monkey;
+              }}
+            />
+            <NftName>{nft.name}</NftName>
+          </NftContainer>
+        ))}
     </MarketContainer>
   );
 };
