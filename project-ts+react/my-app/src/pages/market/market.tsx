@@ -38,12 +38,10 @@ const getNfts = async (): Promise<Nft[]> => {
   return response.result as Nft[];
 };
 
-const initialPurchasedNfts: NftProp[] = [];
 const initialFetchedNft: NftProp[] = [];
 
 export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBalance: (price: number) => void }> = ({ handleBuyNft, updateBalance }) => {
   const { data: nfts, isLoading } = useQuery<Nft[]>('nfts', getNfts);
-  const [purchasedNfts, setPurchasedNfts] = useState<NftProp[]>(initialPurchasedNfts);
   const [fetchedNft, setFetchedNft] = useState<NftProp[]>(initialFetchedNft);
   const [errorHandled, setErrorHandled] = useState(false);
 
@@ -87,7 +85,7 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
       owner: name,
       image,
     };
-  
+
     setSelectedNft(nft);
     setShowCollectButton(false);
     setCollection(prevCollection => {
@@ -96,7 +94,7 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
       return newCollection;
     });
   };
-  
+
   const handleBuyClick = (index: number) => {
     if (fetchedNft.length > 0 && fetchedNft[0]?.price) {
       const price = fetchedNft[0]?.price;
@@ -105,10 +103,11 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
       setSelectedNftIndex(index);
       setShowCollectButton(true);
     } else {
+      setShowCollectButton(false);
       console.log('Insufficient balance or no NFT data');
     }
   };
-
+  
   if (isLoading) return <Loader><Spinner /></Loader>;
 
   return (
@@ -129,13 +128,13 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
               Coming soon...
             </NftImagePlaceholder>
           )}
-  
+
           <NftName>
             {nft.metadata && nft.metadata.name
               ? nft.metadata.name
               : 'Unnamed NFT'}
           </NftName>
-  
+
           <NftItems>
             <Owner>Owner: {fetchedNft[0]?.owner}</Owner>
             <Price>
@@ -156,14 +155,13 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
                   Collect
                 </CollectButton>
               </NavLink>
-  
             ) : (
               <BuyButton onClick={() => handleBuyClick(index)}>Buy</BuyButton>
             )}
-  
+
           </NftItems>
         </NftContainer>
       ))}
     </MarketContainer>
-  );  
+  );
 };

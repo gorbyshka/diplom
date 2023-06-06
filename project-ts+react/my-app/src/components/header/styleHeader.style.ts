@@ -157,7 +157,7 @@ export const Line = styled.div`
 export const HeaderBtnWrapper = styled.div``;
 
 export const UserIcon = styled.div`
-  width: 150px;
+  width: 180px;
   height: 40px;
   border-radius: 20px;
   background-color: #8c1eff;
@@ -188,11 +188,12 @@ export const UserInfo = styled.div`
 `;
 
 export const UserName = styled.div`
-  margin-top: 5px;
-  margin-right: 20px;
+  margin-bottom: 3px;
+  margin-right: 50px;
 `;
 
 export const Balance = styled.span`
+  white-space: nowrap;
   margin-right: 15px;
   font-size: 14px;
   color: #11d45c;
