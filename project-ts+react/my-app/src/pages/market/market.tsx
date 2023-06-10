@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React,
+{
+  useEffect,
+  useState
+} from 'react';
+
 import { useQuery } from 'react-query';
 import Moralis from 'moralis';
 import { NavLink } from 'react-router-dom';
@@ -21,6 +26,7 @@ import {
 } from './marketStyle.style';
 
 import { NftProp } from '../../types/marketTypes/NftProp';
+import { MarketProps } from '../../types/marketTypes/MarketProps';
 
 const getNfts = async (): Promise<Nft[]> => {
   await Moralis.start({
@@ -40,11 +46,10 @@ const getNfts = async (): Promise<Nft[]> => {
 
 const initialFetchedNft: NftProp[] = [];
 
-export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBalance: (price: number) => void }> = ({ handleBuyNft, updateBalance }) => {
+export const Market: React.FC<MarketProps> = ({ handleBuyNft, updateBalance, insufficientBalance, balance }) => {
   const { data: nfts, isLoading } = useQuery<Nft[]>('nfts', getNfts);
   const [fetchedNft, setFetchedNft] = useState<NftProp[]>(initialFetchedNft);
   const [errorHandled, setErrorHandled] = useState(false);
-
   const [showCollectButton, setShowCollectButton] = useState(false);
   const [selectedNftIndex, setSelectedNftIndex] = useState<number | null>(null);
   const [selectedNft, setSelectedNft] = useState<NftProp | null>(null);
@@ -98,23 +103,31 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
   const handleBuyClick = (index: number) => {
     if (fetchedNft.length > 0 && fetchedNft[0]?.price) {
       const price = fetchedNft[0]?.price;
-      handleBuyNft(price);
-      updateBalance(price);
-      setSelectedNftIndex(index);
-      setShowCollectButton(true);
-    } else {
-      setShowCollectButton(false);
-      console.log('Insufficient balance or no NFT data');
+      if (balance >= price) {
+        handleBuyNft(price);
+        updateBalance(price);
+        setSelectedNftIndex(index);
+        setShowCollectButton(false);
+
+      } else {
+        setShowCollectButton(true);
+        console.log('Insufficient balance');
+        return;
+      }
     }
   };
-  
+
   if (isLoading) return <Loader><Spinner /></Loader>;
 
   return (
     <MarketContainer>
+
       {nfts?.map((nft, index) => (
+
         <NftContainer key={index}>
+
           {nft.metadata && nft.metadata.image ? (
+
             <NftImage
               src={`https://gateway.pinata.cloud/ipfs/${nft.metadata.image.replace('ipfs://', '')}`}
               alt=''
@@ -123,24 +136,40 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
                 e.currentTarget.src = monkey;
               }}
             />
+
           ) : (
+
             <NftImagePlaceholder>
               Coming soon...
             </NftImagePlaceholder>
+
           )}
 
           <NftName>
+
             {nft.metadata && nft.metadata.name
               ? nft.metadata.name
               : 'Unnamed NFT'}
+
           </NftName>
 
           <NftItems>
-            <Owner>Owner: {fetchedNft[0]?.owner}</Owner>
+
+            <Owner>
+              Owner: {fetchedNft[0]?.owner}
+            </Owner>
+
             <Price>
-              Price: <Money>{fetchedNft[0]?.price} ETH</Money>
+
+              Price:
+              <Money>
+                {fetchedNft[0]?.price} ETH
+              </Money>
+
             </Price>
+
             {showCollectButton && selectedNftIndex === index ? (
+
               <NavLink
                 to="/collection"
                 state={{
@@ -151,17 +180,31 @@ export const Market: React.FC<{ handleBuyNft: (price: number) => void; updateBal
                   },
                 }}
               >
-                <CollectButton onClick={() => handleCollectClick(index, nft.metadata?.name || '', nft.metadata?.image || '')}>
+
+                <CollectButton
+                  onClick={() => handleCollectClick(index, nft.metadata?.name || '', nft.metadata?.image || '')}
+                >
                   Collect
+
                 </CollectButton>
+
               </NavLink>
+
             ) : (
-              <BuyButton onClick={() => handleBuyClick(index)}>Buy</BuyButton>
+
+              <BuyButton
+                onClick={() => handleBuyClick(index)}>
+                Buy
+              </BuyButton>
+
             )}
 
           </NftItems>
+
         </NftContainer>
+
       ))}
+
     </MarketContainer>
   );
 };

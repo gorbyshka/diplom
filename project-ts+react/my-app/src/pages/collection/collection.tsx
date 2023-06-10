@@ -1,6 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState
+} from 'react';
+
 import { useLocation } from 'react-router-dom';
-import { MarketContainer, NftContainer, NftImage, NftName } from '../market/marketStyle.style';
+
+import {
+  MarketContainer,
+  NftContainer,
+  NftImage,
+  NftName
+} from '../market/marketStyle.style';
+
 import { NftProp } from '../../types/marketTypes/NftProp';
 
 export const Collection: React.FC = () => {
@@ -35,9 +46,13 @@ export const Collection: React.FC = () => {
 
   return (
     <MarketContainer>
+
       {collection.length > 0 &&
+
         collection.map((nft, index) => (
+
           <NftContainer key={`collection-${index}`}>
+
             <NftImage
               src={`https://gateway.pinata.cloud/ipfs/${nft.image?.replace('ipfs://', '')}`}
               alt={`collection-${index}`}
@@ -46,9 +61,15 @@ export const Collection: React.FC = () => {
                 e.currentTarget.src = monkey;
               }}
             />
-            <NftName>{nft.name}</NftName>
+
+            <NftName>
+              {nft.name}
+            </NftName>
+
           </NftContainer>
+
         ))}
+
     </MarketContainer>
   );
 };

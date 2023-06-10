@@ -30,11 +30,7 @@ import {
 } from './styleHeader.style';
 
 import { actionBtns } from './actionBtns';
-
-interface HeaderProps {
-  initialBalance: string | null;
-  handleUpdateBalance: (newBalance: number) => void;
-}
+import { HeaderProps } from '../../types/headerTypes/HeaderProps';
 
 export const Header: FC<HeaderProps> = ({ initialBalance, handleUpdateBalance }) => {
   const [show, setShow] = useState(false);
@@ -47,7 +43,6 @@ export const Header: FC<HeaderProps> = ({ initialBalance, handleUpdateBalance })
   useEffect(() => {
     setHeaderBalance(Number(initialBalance));
   }, [initialBalance]);
-
 
   const transitionRef = useRef(null);
 
@@ -98,18 +93,29 @@ export const Header: FC<HeaderProps> = ({ initialBalance, handleUpdateBalance })
         unmountOnExit
         nodeRef={transitionRef}
       >
+
         <HeaderWrapper
           scrolled={scrolled}
           className={`header ${scrolled ? 'scrolled' : ''}`}
           ref={transitionRef}
         >
+
           <HeaderItems>
+
             <HeaderLogo>
-              <Logo image={require('./img/nft.png')} id="logo" />
-              <NameLogo>NFTs</NameLogo>
+
+              <Logo
+                image={require('./img/nft.png')}
+                id="logo" />
+
+              <NameLogo>
+                NFTs
+              </NameLogo>
+
             </HeaderLogo>
 
             <HeaderNav>
+
               <BurgerMenu
                 isOpen={isOpen}
                 className={`burger-menu ${isOpen ? 'open' : ''}`}
@@ -118,35 +124,59 @@ export const Header: FC<HeaderProps> = ({ initialBalance, handleUpdateBalance })
                 <Line />
                 <Line />
                 <Line />
+
               </BurgerMenu>
 
               <NavList
                 isOpen={isOpen}
                 className={`nav-list ${isOpen ? 'open' : ''}`}
               >
+
                 {navLinks.map((link, index) => (
-                  <NavLink key={index} path={link.path} title={link.title} />
+
+                  <NavLink
+                    key={index}
+                    path={link.path}
+                    title={link.title}
+                  />
+
                 ))}
+
               </NavList>
+
             </HeaderNav>
 
             <HeaderBtnWrapper>
+
               {username && (
+
                 <UserIcon>
+
                   <Image
                     Src={require('./icons/user-logo.svg').default}
                     Alt={'user-logo'}
                   />
 
                   <UserInfo>
-                    <UserName>{username}</UserName>
-                    <Balance>Баланс: {formatBalance(initialBalance)} {' '} ETH</Balance>
+
+                    <UserName>
+                      {username}
+                    </UserName>
+
+                    <Balance>
+                      Баланс: {formatBalance(initialBalance)} {' '} ETH
+                    </Balance>
+
                   </UserInfo>
+
                 </UserIcon>
+
               )}
 
               {!username &&
+
                 actionBtns.map((btn) => (
+
                   <HeadBtn
                     key={btn.id}
                     nameBtn={btn.name}
@@ -154,18 +184,26 @@ export const Header: FC<HeaderProps> = ({ initialBalance, handleUpdateBalance })
                     id={btn.id}
                     onClick={btn.id === 2 ? handleRegisterClick : undefined}
                   />
+
                 ))}
+
             </HeaderBtnWrapper>
+
           </HeaderItems>
+
         </HeaderWrapper>
+
       </StyledCSSTransition>
 
       {showPopup && (
+
         <SignUp
           Click={handlePopupClose}
           onRegistration={handleRegistration}
         />
+
       )}
+
     </>
   );
 };

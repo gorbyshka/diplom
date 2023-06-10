@@ -1,7 +1,22 @@
-import { FC, useState, useEffect } from 'react';
+import {
+  FC,
+  useState,
+  useEffect
+} from 'react';
+
 import '../normalize.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from 'react-router-dom';
+
+import {
+  QueryClient,
+  QueryClientProvider
+} from 'react-query';
+
 import { animateScroll } from 'react-scroll';
 import { Header } from './header';
 import { Main } from './main';
@@ -10,7 +25,15 @@ import { Market } from '../pages/market/market';
 import { Wallet } from '../pages/wallet/wallet';
 import { Collection } from '../pages/collection/collection';
 import { Image } from './main/buyandsell/image';
-import { AppContainer, BtnsContainer, GlobalStyle, ScrollBtn, ScrollbarStyle } from './appStyle.style';
+
+import {
+  AppContainer,
+  BtnsContainer,
+  GlobalStyle,
+  ScrollBtn,
+  ScrollbarStyle
+} from './appStyle.style';
+
 import Web3 from 'web3';
 import { NftProp } from '../types/marketTypes/NftProp';
 
@@ -21,6 +44,7 @@ export const App: FC = () => {
   const [balance, setBalance] = useState<number>(100);
   const [fetchedNft, setFetchedNft] = useState<NftProp[]>([]);
   const [headerBalance, setHeaderBalance] = useState<number>(100);
+  const [insufficientBalance, setInsufficientBalance] = useState(false);
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -73,37 +97,82 @@ export const App: FC = () => {
 
   return (
     <AppContainer>
+
       <GlobalStyle />
+
       <ScrollbarStyle />
+
       <BrowserRouter>
-        <Header initialBalance={headerBalance.toString()} handleUpdateBalance={updateBalance} />
+
+        <Header
+          initialBalance={headerBalance.toString()}
+          handleUpdateBalance={updateBalance}
+        />
+
         <BtnsContainer>
+
           {isAtTop && (
-            <ScrollBtn onClick={() => animateScroll.scrollToBottom()}>
-              <Image Src={require('././icons/arrow-down.svg').default} Alt={'arrow-down'} />
+
+            <ScrollBtn
+              onClick={() => animateScroll.scrollToBottom()}
+            >
+
+              <Image
+                Src={require('././icons/arrow-down.svg').default}
+                Alt={'arrow-down'}
+              />
+
             </ScrollBtn>
           )}
+
         </BtnsContainer>
+
         <QueryClientProvider client={queryClient}>
+
           <Routes>
 
             <Route path="/" element={<Main />} />
-            <Route path="/market" element={<Market handleBuyNft={handleBuyClick} updateBalance={updateBalance} />} />
+
+            <Route path="/market" element={
+              <Market
+                handleBuyNft={handleBuyClick}
+                updateBalance={updateBalance}
+                insufficientBalance={insufficientBalance}
+                balance={balance}
+              />} />
+
             <Route path="/artists" element={<h1>Artist</h1>} />
+
             <Route path="/collection" element={<Collection />} />
+
             <Route path="/wallet" element={<Wallet />} />
-            
+
           </Routes>
+
         </QueryClientProvider>
+
         <BtnsContainer>
+
           {!isAtTop && (
-            <ScrollBtn onClick={() => animateScroll.scrollToTop()}>
-              <Image Src={require('././icons/arrow-up.svg').default} Alt={'arrow-up'} />
+
+            <ScrollBtn
+              onClick={() => animateScroll.scrollToTop()}
+            >
+
+              <Image
+                Src={require('././icons/arrow-up.svg').default}
+                Alt={'arrow-up'}
+              />
+
             </ScrollBtn>
           )}
+
         </BtnsContainer>
+
         <Footer />
+
       </BrowserRouter>
+
     </AppContainer>
   );
 };
